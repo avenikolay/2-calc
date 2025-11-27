@@ -44,38 +44,42 @@ func getNums() []int64 {
 	return numbers
 }
 
-func calculate(operation string, nums []int64) int64 {
-
-	if operation == "MED" {
-		sort.Slice(nums, func(i, j int) bool {
-			return nums[i] < nums[j]
-		})
+func getMedian(nums []int64) int64 {
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	if len(nums)%2 == 0 {
+		return (nums[len(nums)/2-1] + nums[len(nums)/2]) / 2
 	}
+	return nums[len(nums)/2]
+}
 
+func getSum(nums []int64) int64 {
 	result := int64(0)
-	switch operation {
-	case "SUM":
-		for _, value := range nums {
-			result += value
-		}
-	case "MED":
-		if len(nums)%2 == 0 {
-			result = (nums[len(nums)/2-1] + nums[len(nums)/2]) / 2
-		} else {
-			result = nums[len(nums)/2]
-		}
-	case "AVG":
-		for _, value := range nums {
-			result += value
-		}
-		result /= int64(len(nums))
+	for _, value := range nums {
+		result += value
 	}
 	return result
+}
+func getAvg(nums []int64) int64 {
+	result := int64(0)
+	for _, value := range nums {
+		result += value
+	}
+	result /= int64(len(nums))
+	return result
+}
+
+var actions = map[string]func([]int64) int64{
+	"MED": getMedian,
+	"SUM": getSum,
+	"AVG": getAvg,
 }
 
 func main() {
 	operation := getOperation()
 	nums := getNums()
-	result := calculate(operation, nums)
+	calculateFunc := actions[operation]
+	result := calculateFunc(nums)
 	fmt.Println(result)
 }
